@@ -48,7 +48,7 @@ indigoInchi = IndigoInchi(indigo)
 
 # PIL and Tkinter
 try:
-    import Tkinter as tk
+    import tkinter as tk
     import Image as PIL
     import ImageTk as PILtk
 except:
@@ -93,7 +93,7 @@ def readfile(format, filename):
     43
     """
     if not os.path.isfile(filename):
-        raise IOError, "No such file: '%s'" % filename
+        raise IOError("No such file: '%s'" % filename)
     format = format.lower()
     # Eagerly evaluate the supplier functions in order to report
     # errors in the format and errors in opening the file.
@@ -128,7 +128,7 @@ def readfile(format, filename):
         return cml_reader()
 
     else:
-        raise ValueError, "%s is not a recognised Indigo format" % format
+        raise ValueError("%s is not a recognised Indigo format" % format)
 
 def readstring(format, string):
     """Read in a molecule from a string.
@@ -146,14 +146,14 @@ def readstring(format, string):
     """
     format = format.lower()
     if format not in informats:
-        raise ValueError,"%s is not a recognised Indigo format" % format
+        raise ValueError("%s is not a recognised Indigo format" % format)
 
     module = indigo if format != "inchi" else indigoInchi
     try:
         mol = module.loadMolecule(string)
     except IndigoException:
-        raise IOError, "Failed to convert '%s' to format '%s'" % (
-            string, format)
+        raise IOError("Failed to convert '%s' to format '%s'" % (
+            string, format))
 
     return Molecule(mol)
 
@@ -178,11 +178,11 @@ class Outputfile(object):
         self.format = format
         self.filename = filename
         if not overwrite and os.path.isfile(self.filename):
-            raise IOError, "%s already exists. Use 'overwrite=True' to overwrite it." % self.filename
+            raise IOError("%s already exists. Use 'overwrite=True' to overwrite it." % self.filename)
         if self.format in ["sdf", "cml", "rdf", "smi"]:
             self._writer = indigo.writeFile(self.filename)
         else:
-            raise ValueError,"%s is not supported for multimolecule output" % format
+            raise ValueError("%s is not supported for multimolecule output" % format)
         self.total = 0 # The total number of molecules written to the file
 
         if self.format == "cml":
@@ -197,7 +197,7 @@ class Outputfile(object):
            molecule
         """
         if not self.filename:
-            raise IOError, "Outputfile instance is closed."
+            raise IOError("Outputfile instance is closed.")
 
         if self.format == "sdf":
             self._writer.sdfAppend(molecule.Mol)
@@ -292,7 +292,7 @@ class Molecule(object):
         format = format.lower()
         if filename:
             if not overwrite and os.path.isfile(filename):
-                raise IOError, "%s already exists. Use 'overwrite=True' to overwrite it." % filename
+                raise IOError("%s already exists. Use 'overwrite=True' to overwrite it." % filename)
         if format=="smi":
             result = self.Mol.smiles()
         elif format=="can":
@@ -311,7 +311,7 @@ class Molecule(object):
             buf.sdfAppend(self.Mol)
             result = buf.toString()
         else:
-            raise ValueError,"%s is not a recognised Indigo format" % format
+            raise ValueError("%s is not a recognised Indigo format" % format)
         if filename:
             output = open(filename, "w")
             output.write(result)
@@ -364,7 +364,7 @@ class Molecule(object):
         if fptype in ["sim", "sub", "sub-res", "sub-tau", "full"]:
             fp = Fingerprint(self.Mol.fingerprint(fptype))
         else:
-            raise ValueError, "%s is not a recognised Indigo Fingerprint type" % fptype
+            raise ValueError("%s is not a recognised Indigo Fingerprint type" % fptype)
         return fp
 
     def draw(self, show=True, filename=None, update=False, usecoords=False):
@@ -436,7 +436,7 @@ class Molecule(object):
                                         "Library not found, but is required for image "
                                         "display. See installation instructions for "
                                         "more information.")
-                        raise ImportError, errormessage
+                        raise ImportError(errormessage)
 
                     root = tk.Tk()
                     root.title((hasattr(self, "title") and self.title)
@@ -507,7 +507,7 @@ class Smarts(object):
         try:
             self.smarts = indigo.loadSmarts(smartspattern)
         except IndigoException:
-            raise IOError, "Invalid SMARTS pattern."
+            raise IOError("Invalid SMARTS pattern.")
 
     def findall(self,molecule):
         """Find all matches of the SMARTS pattern to a particular molecule.
@@ -556,7 +556,7 @@ class MoleculeData(object):
         self._mol = Mol
     def _testforkey(self, key):
         if not self._mol.hasProperty(key):
-            raise KeyError, "'%s'" % key
+            raise KeyError("'%s'" % key)
     def keys(self):
         return [prop.name() for prop in self._mol.iterateProperties()]
     def values(self):
@@ -565,11 +565,11 @@ class MoleculeData(object):
         return [(prop.name(), prop.rawData())
                 for prop in self._mol.iterateProperties()]
     def __iter__(self):
-        return iter(self.keys())
+        return iter(list(self.keys()))
     def iteritems(self):
-        return iter(self.items())
+        return iter(list(self.items()))
     def __len__(self):
-        return len(self.keys())
+        return len(list(self.keys()))
     def __contains__(self, key):
         return self._mol.hasProperty(key)
     def __delitem__(self, key):
@@ -581,7 +581,7 @@ class MoleculeData(object):
     def has_key(self, key):
         return key in self
     def update(self, dictionary):
-        for k, v in dictionary.iteritems():
+        for k, v in dictionary.items():
             self[k] = v
     def __getitem__(self, key):
         self._testforkey(key)
@@ -589,7 +589,7 @@ class MoleculeData(object):
     def __setitem__(self, key, value):
         self._mol.setProperty(key, str(value))
     def __repr__(self):
-        return dict(self.iteritems()).__repr__()
+        return dict(iter(self.items())).__repr__()
 
 class Fingerprint(object):
     """A Molecular Fingerprint.

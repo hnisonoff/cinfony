@@ -1,0 +1,15 @@
+setup.py
+cinfony/__init__.py
+cinfony/cdk.py
+cinfony/indy.py
+cinfony/jchem.py
+cinfony/opsin.py
+cinfony/pybel.py
+cinfony/rdk.py
+cinfony/silverwebel.py
+cinfony/webel.py
+cinfony.egg-info/PKG-INFO
+cinfony.egg-info/SOURCES.txt
+cinfony.egg-info/dependency_links.txt
+cinfony.egg-info/top_level.txt
+test/testall.py

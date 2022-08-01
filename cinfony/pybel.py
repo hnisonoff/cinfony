@@ -52,7 +52,7 @@ else:
     import openbabel as ob
     _obfuncs = _obconsts = ob
     try:
-        import Tkinter as tk
+        import tkinter as tk
         import Image as PIL
         import ImageTk as piltk
     except ImportError: #pragma: no cover
@@ -131,7 +131,7 @@ def readfile(format, filename, opt=None):
         opt = {}
     obconversion = ob.OBConversion()
     formatok = obconversion.SetInFormat(format)
-    for k, v in opt.items():
+    for k, v in list(opt.items()):
         if v == None:
             obconversion.AddOption(k, obconversion.INOPTIONS)
         else:
@@ -177,7 +177,7 @@ def readstring(format, string, opt=None):
     formatok = obconversion.SetInFormat(format)
     if not formatok:
         raise ValueError("%s is not a recognised Open Babel format" % format)
-    for k, v in opt.items():
+    for k, v in list(opt.items()):
         if v == None:
             obconversion.AddOption(k, obconversion.INOPTIONS)
         else:
@@ -226,7 +226,7 @@ class Outputfile(object):
         if not formatok:
             raise ValueError("%s is not a recognised Open Babel format" % format)
 
-        for k, v in opt.items():
+        for k, v in list(opt.items()):
             if v == None:
                 self.obConversion.AddOption(k, self.obConversion.OUTOPTIONS)
             else:
@@ -406,7 +406,7 @@ class Molecule(object):
         formatok = obconversion.SetOutFormat(format)
         if not formatok:
             raise ValueError("%s is not a recognised Open Babel format" % format)
-        for k, v in opt.items():
+        for k, v in list(opt.items()):
             if v == None:
                 obconversion.AddOption(k, obconversion.OUTOPTIONS)
             else:
@@ -763,11 +763,11 @@ class MoleculeData(object):
     def values(self):
         return [x.GetValue() for x in self._data()]
     def items(self):
-        return iter(zip(self.keys(), self.values()))
+        return iter(zip(list(self.keys()), list(self.values())))
     def __iter__(self):
-        return iter(self.keys())
+        return iter(list(self.keys()))
     def iteritems(self): # Can remove for Python 3
-        return self.items()
+        return list(self.items())
     def __len__(self):
         return len(self._data())
     def __contains__(self, key):
@@ -781,7 +781,7 @@ class MoleculeData(object):
     def has_key(self, key):
         return key in self
     def update(self, dictionary):
-        for k, v in dictionary.items():
+        for k, v in list(dictionary.items()):
             self[k] = v
     def __getitem__(self, key):
         self._testforkey(key)
@@ -802,7 +802,7 @@ class MoleculeData(object):
             pairdata.SetValue(str(value))
             self._mol.CloneData(pairdata)
     def __repr__(self):
-        return dict(self.items()).__repr__()
+        return dict(list(self.items())).__repr__()
 
 if sys.platform[:3] == "cli":
     class _MyForm(Form):

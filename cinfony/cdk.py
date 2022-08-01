@@ -68,7 +68,7 @@ def _getdescdict():
     return descdict
 
 _descdict = _getdescdict()
-descs = _descdict.keys()
+descs = list(_descdict.keys())
 """A list of supported descriptors"""
 _fingerprinters = {"daylight":cdk.fingerprint.Fingerprinter
                             , "graph":cdk.fingerprint.GraphOnlyFingerprinter
@@ -80,7 +80,7 @@ _fingerprinters = {"daylight":cdk.fingerprint.Fingerprinter
                             , "pubchem":cdk.fingerprint.PubchemFingerprinter
                             , "substructure":cdk.fingerprint.SubstructureFingerprinter
                             }
-fps = _fingerprinters.keys()
+fps = list(_fingerprinters.keys())
 """A list of supported fingerprint types"""
 _formats = {'smi': "SMILES" , 'can': "Canonical SMILES", 'sdf': "MDL SDF",
             'mol2': "MOL2", 'mol': "MDL MOL",
@@ -92,7 +92,7 @@ informats = dict([(_x, _formats[_x]) for _x in ['smi', 'sdf', 'mol', 'inchi']])
 _outformats = {'mol': cdk.io.MDLV2000Writer,
                'mol2': cdk.io.Mol2Writer,
                'sdf': cdk.io.SDFWriter}
-outformats = dict([(_x, _formats[_x]) for _x in _outformats.keys() + ['can', 'smi', 'inchi', 'inchikey']])
+outformats = dict([(_x, _formats[_x]) for _x in list(_outformats.keys()) + ['can', 'smi', 'inchi', 'inchikey']])
 """A dictionary of supported output formats"""
 forcefields = list(cdk.modeling.builder3d.ModelBuilder3D.getInstance(_chemobjbuilder).getFfTypes())
 """A list of supported forcefields"""
@@ -102,7 +102,7 @@ _isofact = cdk.config.Isotopes.getInstance()
 _bondtypes = {1: cdk.CDKConstants.BONDORDER_SINGLE,
               2: cdk.CDKConstants.BONDORDER_DOUBLE,
               3: cdk.CDKConstants.BONDORDER_TRIPLE}
-_revbondtypes = dict([(_y,_x) for (_x,_y) in _bondtypes.iteritems()])
+_revbondtypes = dict([(_y,_x) for (_x,_y) in _bondtypes.items()])
 
 def _intvalue(integer):
     """Paper over some differences between JPype and Jython"""
@@ -367,7 +367,7 @@ class Molecule(object):
             smiles = sg.create(self.Molecule)
             if filename:
                 output = open(filename, "w")
-                print >> output, smiles
+                print(smiles, file=output)
                 output.close()
                 return
             else:
@@ -680,9 +680,9 @@ class MoleculeData(object):
     def items(self):
         return [(k, self[k]) for k in self._data().keySet()]
     def __iter__(self):
-        return iter(self.keys())
+        return iter(list(self.keys()))
     def iteritems(self):
-        return iter(self.items())
+        return iter(list(self.items()))
     def __len__(self):
         return len(self._data())
     def __contains__(self, key):
@@ -696,7 +696,7 @@ class MoleculeData(object):
     def has_key(self, key):
         return key in self
     def update(self, dictionary):
-        for k, v in dictionary.iteritems():
+        for k, v in dictionary.items():
             self[k] = v
     def __getitem__(self, key):
         self._testforkey(key)
@@ -704,7 +704,7 @@ class MoleculeData(object):
     def __setitem__(self, key, value):
         self._mol.setProperty(key, str(value))
     def __repr__(self):
-        return dict(self.iteritems()).__repr__()
+        return dict(iter(self.items())).__repr__()
 
 if __name__=="__main__": #pragma: no cover
     mol = readstring("smi", "CC(=O)Cl")

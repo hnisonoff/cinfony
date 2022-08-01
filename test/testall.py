@@ -40,7 +40,7 @@ except (NameError, RuntimeError, ImportError, KeyError):
 try: # Define next() for Jython 2.5
     next
 except (NameError):
-    next = lambda x: x.next()
+    next = lambda x: x.__next__()
 
 class myTestCase(unittest.TestCase):
     """Additional methods not present in Jython 2.2"""
@@ -100,8 +100,8 @@ class TestToolkit(myTestCase):
     def testattributes(self):
         """Test attributes like informats, descs and so on"""
         informats, outformats = self.toolkit.informats, self.toolkit.outformats
-        self.assertNotEqual(len(self.toolkit.informats.keys()), 0)
-        self.assertNotEqual(len(self.toolkit.outformats.keys()), 0)
+        self.assertNotEqual(len(list(self.toolkit.informats.keys())), 0)
+        self.assertNotEqual(len(list(self.toolkit.outformats.keys())), 0)
         self.assertNotEqual(len(self.toolkit.descs), 0)
         self.assertNotEqual(len(self.toolkit.forcefields), 0)
         self.assertNotEqual(len(self.toolkit.fps), 0)
@@ -311,12 +311,12 @@ M  END
         newvalues = {'hey':'there', 'yo':1}
         data.update(newvalues)
         self.assertEqual(data['yo'], '1')
-        self.assertTrue('there' in data.values())
+        self.assertTrue('there' in list(data.values()))
 
     def testMDglobalaccess(self):
         """Check out the keys"""
         data = self.head[0].data
-        self.assertFalse(data.has_key('Noel'))
+        self.assertFalse('Noel' in data)
         self.assertEqual(len(data), len(self.datakeys))
         for key in data:
             self.assertEqual(key in self.datakeys, True)
@@ -326,9 +326,9 @@ M  END
     def testMDdelete(self):
         """Delete some keys"""
         data = self.head[0].data
-        self.assertTrue(data.has_key('NSC'))
+        self.assertTrue('NSC' in data)
         del data['NSC']
-        self.assertFalse(data.has_key('NSC'))
+        self.assertFalse('NSC' in data)
         data.clear()
         self.assertEqual(len(data), 0)
 
@@ -446,8 +446,8 @@ class TestIndigo(TestToolkit):
     def testattributes(self):
         """Test attributes like informats, descs and so on"""
         informats, outformats = self.toolkit.informats, self.toolkit.outformats
-        self.assertNotEqual(len(self.toolkit.informats.keys()), 0)
-        self.assertNotEqual(len(self.toolkit.outformats.keys()), 0)
+        self.assertNotEqual(len(list(self.toolkit.informats.keys())), 0)
+        self.assertNotEqual(len(list(self.toolkit.outformats.keys())), 0)
         self.assertNotEqual(len(self.toolkit.fps), 0)
 
     def testLocalOpt(self):
@@ -537,8 +537,8 @@ class TestWebel(TestToolkit):
     def testattributes(self):
         """Test attributes like informats, descs and so on"""
         informats, outformats = self.toolkit.informats, self.toolkit.outformats
-        self.assertNotEqual(len(self.toolkit.informats.keys()), 0)
-        self.assertNotEqual(len(self.toolkit.outformats.keys()), 0)
+        self.assertNotEqual(len(list(self.toolkit.informats.keys())), 0)
+        self.assertNotEqual(len(list(self.toolkit.outformats.keys())), 0)
         self.assertNotEqual(len(self.toolkit.getdescs()), 0)
         self.assertNotEqual(len(self.toolkit.fps), 0)
     def testRSconversiontoMOL(self):
@@ -655,6 +655,6 @@ if __name__=="__main__":
         testcases = [lookup[x] for x in sys.argv[1:]]
 
     for testcase in testcases:
-        print("\n\n\nTESTING %s\n%s\n\n" % (testcase.__name__, "== "*10))
+        print(("\n\n\nTESTING %s\n%s\n\n" % (testcase.__name__, "== "*10)))
         myunittest = unittest.defaultTestLoader.loadTestsFromTestCase(testcase)
         unittest.TextTestRunner(verbosity=1).run(myunittest)

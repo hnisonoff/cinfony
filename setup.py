@@ -41,7 +41,7 @@ setup(
     license = "BSD",
     description = doclines[0],
     long_description = "\n".join(doclines[2:]),
-    classifiers = filter(None, classifiers.split("\n")),
+    classifiers = [_f for _f in classifiers.split("\n") if _f],
     platforms = ["Any."],
     packages = ['cinfony'],
     )
